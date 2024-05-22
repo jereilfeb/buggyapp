@@ -1,4 +1,4 @@
-FROM maven:3.8-jdk-8 as builder
+FROM maven as builder
 COPY . /usr/src/easybuggy/
 WORKDIR /usr/src/easybuggy/
 RUN mvn -B package
