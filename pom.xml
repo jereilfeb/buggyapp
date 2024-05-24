@@ -36,7 +36,7 @@
 		<profile>
 			<id>JDK11-Switch</id>
 			<activation>
-				<jdk>11</jdk>
+				<jdk>17</jdk>
 			</activation>
 			<properties>
 				<jvm.args.perm.size>-XX:MaxMetaspaceSize=128m</jvm.args.perm.size>
@@ -133,7 +133,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.6.3</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
