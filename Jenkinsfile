@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-    environment {
+   // environment {
         // Declare the environment variable for SonarCloud token
-        SONAR_TOKEN = credentials('SONAR_TOKEN')
+    //    SONAR_TOKEN = credentials('SONAR_TOKEN')
     }
 
     tools { 
@@ -19,8 +19,8 @@ pipeline {
 
         stage('Compile and Run Sonar Analysis') {
             steps {	
-                // Use the environment variable SONAR_TOKEN
-                sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=git-buggy_git-buggy -Dsonar.organization=git-buggy -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=1a3f9934eb3c8356ed969dff5103d52c571014d9'
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SECRET_VARIABLE')])
+                sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=git-buggy_git-buggy -Dsonar.organization=git-buggy -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=\$SECRET_VARIABLE'
             } 
         }
     }
