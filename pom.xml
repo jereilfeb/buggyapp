@@ -36,7 +36,7 @@
 		<profile>
 			<id>JDK11-Switch</id>
 			<activation>
-				<jdk>17</jdk>
+				<jdk>11</jdk>
 			</activation>
 			<properties>
 				<jvm.args.perm.size>-XX:MaxMetaspaceSize=128m</jvm.args.perm.size>
@@ -133,7 +133,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.3</version>
+				<version>2.3.2</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -198,7 +198,7 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-							<tasks>
+							<target>
 								<mkdir dir="logs" />
 								<copy file="${basedir}/src/main/resources/messages_en.properties"
 									tofile="${project.build.outputDirectory}/messages.properties" />
@@ -206,7 +206,7 @@
 									tofile="${project.build.outputDirectory}/indexpage.properties" />
 								<delete
 									file="${project.build.outputDirectory}/org/t246osslab/easybuggy/core/utils/DeleteClassWhileMavenBuild.class" />
-							</tasks>
+							</target>
 						</configuration>
 					</execution>
 				</executions>
