@@ -16,7 +16,7 @@ pipeline {
             steps {    
                 // Use the withCredentials block to securely access the secret text within this step
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SECRET_VARIABLE')]) { secret ->
-                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=buggy-app-test -Dsonar.organization=buggy-app-test -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=363c4cb262b8ecfe5b0aa2cea242d8db081966ac'
+                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=buggy-app-test -Dsonar.organization=buggy-app-test -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${secret}'
                 }
             } 
         }
