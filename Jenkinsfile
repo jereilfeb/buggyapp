@@ -1,14 +1,12 @@
-pipeline {
+pipeline { 
     agent any
 
-   // environment {
-        // Declare the environment variable for SonarCloud token
-      //  SONAR_TOKEN = credentials('SONAR_TOKEN')
-    }
+
 
     tools { 
         maven 'maven'
     }
+}
 
     stages {
         stage('Checkout') {
