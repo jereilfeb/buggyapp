@@ -3,7 +3,7 @@ pipeline {
 
    // environment {
         // Declare the environment variable for SonarCloud token
-        SONAR_TOKEN = credentials('SONAR_TOKEN')
+      //  SONAR_TOKEN = credentials('SONAR_TOKEN')
     }
 
     tools { 
