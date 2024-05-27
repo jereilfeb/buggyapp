@@ -27,9 +27,16 @@ pipeline {
                     sh 'mvn snyk:test -fn'
                 }
         }
-
-
-        }
+     }
+            stage('build') {
+                steps {
+                    withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
+                        script {
+                            app = docker.build("buggy")
+                        }
+                    }
+                }
+            }
     }
 }
 
