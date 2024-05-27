@@ -23,7 +23,7 @@ pipeline {
             }
             stage('RunSCANAnalysisUsingSynk') {
             steps{
-               withCredentials([string(credentialsId: 'SNYK_API_KEY', variable: 'SNYK_TOKEN')]) {
+               withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SNYK_TOKEN')]) {
                     sh 'mvn snyk:test -fn'
                 }
         }
