@@ -30,12 +30,12 @@ pipeline {
      }
             stage('build') {
                 steps {
-                //    withDockerRegistry([credentialsId: "dockerlogin", url: 'https://index.docker.io/v1/']) {
-                //        script {
+        //            withDockerRegistry([credentialsId: "dockerlogin", url: 'https://index.docker.io/v1/']) {
+            //           script {
                             app = docker.build("buggy")
-                //        }
-                    }
-                }
+ //                      }
+   //                 }
+  //              }
             }
     }
 }
