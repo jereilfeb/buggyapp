@@ -308,7 +308,7 @@
       <version>2.0.0</version>
       <inherited>false</inherited>
       <configuration>
-        <org>asecurityguru</org>
+        <org>buggy-app-test-pipeline</org>
       </configuration>
     </plugin>
 <!-- Snyk Changes for SCA Ends Here -->
