@@ -37,13 +37,7 @@ pipeline {
                    }
                }
             }
-            stage('Push') {
-                steps {
-                    docker.withRegistry('https://975050199901.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:AWS_CREDENTIALS') {
-                        app.push("latest")
-                    }
-                }
-            }
+           
     }
 }
 
