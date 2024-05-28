@@ -5,6 +5,12 @@ pipeline {
         maven 'maven'
     }
 
+    environment {
+        AWS_ACCOUNT_ID = '975050199901'
+        AWS_REGION = 'us-east-1'
+        ECR_REPO = 'buggy'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -32,9 +38,16 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
-                        app = docker.build("buggy")
-                    }
+                    app = docker.build("buggy")
+                }
+            }
+        }
+
+        stage('Tag Docker Image') {
+            steps {
+                script {
+                    // Tag Docker image
+                    sh "docker tag buggy $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest"
                 }
             }
         }
@@ -42,13 +55,9 @@ pipeline {
         stage('Push Docker Image to ECR') {
             steps {
                 script {
-                    // Tag Docker image for ECR
-                    docker.withRegistry('https://975050199901.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:AWS_CREDENTIALS') {
-                        app.tag("latest", "975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest")
-                    }
                     // Push Docker image to ECR
-                    docker.withRegistry('', 'ecr:us-east-1:AWS_CREDENTIALS') {
-                        app.push("latest")
+                    withCredentials([string(credentialsId: 'aws-credentials', variable: 'AWS_CREDENTIALS')]) {
+                        sh "docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest"
                     }
                 }
             }
