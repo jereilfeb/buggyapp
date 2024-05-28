@@ -28,19 +28,37 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
                     // Build Docker image
-                    docker.withRegistry('https://975050199901.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:AWS_CREDENTIALS') {
+                    withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
                         app = docker.build("buggy")
                     }
-                    // Push Docker image
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                script {
+                    // Tag Docker image for ECR
+                    docker.withRegistry('https://975050199901.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:AWS_CREDENTIALS') {
+                        app.tag("latest", "975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest")
+                    }
+                    // Push Docker image to ECR
                     docker.withRegistry('', 'ecr:us-east-1:AWS_CREDENTIALS') {
                         app.push("latest")
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            // Clean up Docker image
+            sh 'docker rmi -f buggy:latest'
         }
     }
 }
