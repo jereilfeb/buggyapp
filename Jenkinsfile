@@ -30,12 +30,20 @@ pipeline {
      }
             stage('build') {
                 steps {
-                   withDockerRegistry([credentialsId: "dockerlogin", url: 'https://index.docker.io/v1/']) {
+                   withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
                       script {
                             app = docker.build("buggy")
                      }
                    }
                }
+            }
+            stage('Push') {
+                steps {
+                    docker.withDockerRegistry('975050199901.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:AWS_CREDENTIALS') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
+                }
             }
     }
 }
