@@ -39,8 +39,7 @@ pipeline {
             }
             stage('Push') {
                 steps {
-                    docker.withDockerRegistry('https://975050199901.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:AWS_CREDENTIALS') {
-                        app.push("${env.BUILD_NUMBER}")
+                    docker.withRegistry('https://975050199901.dkr.ecr.us-east-1.amazonaws.com', 'ecr:us-east-1:AWS_CREDENTIALS') {
                         app.push("latest")
                     }
                 }
