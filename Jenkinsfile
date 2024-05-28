@@ -5,12 +5,6 @@ pipeline {
         maven 'maven'
     }
 
-    environment {
-        AWS_ACCOUNT_ID = '975050199901'
-        AWS_REGION = 'us-east-1'
-        ECR_REPO = 'buggy'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -47,7 +41,7 @@ pipeline {
             steps {
                 script {
                     // Tag Docker image
-                    sh "docker tag buggy $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest"
+                    sh "docker tag buggy 975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest"
                 }
             }
         }
@@ -57,7 +51,7 @@ pipeline {
                 script {
                     // Push Docker image to ECR
                     withCredentials([string(credentialsId: 'aws-credentials', variable: 'AWS_CREDENTIALS')]) {
-                        sh "docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest"
+                        sh "docker push 975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest"
                     }
                 }
             }
