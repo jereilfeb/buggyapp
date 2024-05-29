@@ -8,10 +8,10 @@ pipeline {
         string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'buggy', description: 'Name of the Docker image')
         string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region')
         string(name: 'AWS_ECR_REPO_URL', defaultValue: '975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy', description: 'AWS ECR repository URL')
-        string(name: 'ECS_CLUSTER_NAME', defaultValue: 'my-cluster', description: 'ECS Cluster Name')
-        string(name: 'ECS_SERVICE_NAME', defaultValue: 'my-service', description: 'ECS Service Name')
-        string(name: 'ECS_TASK_DEFINITION', defaultValue: 'my-task', description: 'ECS Task Definition Name')
-        string(name: 'ECS_CONTAINER_NAME', defaultValue: 'my-container', description: 'ECS Container Name')
+        string(name: 'ECS_CLUSTER_NAME', defaultValue: 'Test_Cluster', description: 'ECS Cluster Name')
+        string(name: 'ECS_SERVICE_NAME', defaultValue: 'test', description: 'ECS Service Name')
+        string(name: 'ECS_TASK_DEFINITION', defaultValue: 'task-dev01', description: 'ECS Task Definition Name')
+        string(name: 'ECS_CONTAINER_NAME', defaultValue: 'test', description: 'ECS Container Name')
     }
 
     stages {
