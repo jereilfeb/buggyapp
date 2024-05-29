@@ -12,6 +12,7 @@ pipeline {
         string(name: 'ECS_SERVICE_NAME', defaultValue: 'test', description: 'ECS Service Name')
         string(name: 'ECS_TASK_DEFINITION', defaultValue: 'task-dev01', description: 'ECS Task Definition Name')
         string(name: 'ECS_CONTAINER_NAME', defaultValue: 'test', description: 'ECS Container Name')
+        string(credentialsId: 'aws-credentials', name: 'AWS_CREDENTIALS', defaultValue: '', description: 'AWS credentials for ECR and ECS')
     }
 
     stages {
@@ -57,9 +58,9 @@ pipeline {
 
         stage('Push Docker Image to ECR') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                withCredentials([string(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     // Login to AWS ECR securely
-                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 975050199901.dkr.ecr.us-east-1.amazonaws.com"
+                    sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ECR_REPO_URL.split('/')[0]}"
 
                     // Push Docker image to ECR
                     sh "docker push ${params.AWS_ECR_REPO_URL}:latest"
@@ -69,7 +70,7 @@ pipeline {
 
         stage('Deploy to ECS Fargate') {
             steps {
-                withAWS(region: params.AWS_REGION, credentials: 'aws-credentials') {
+                withAWS(region: params.AWS_REGION, credentials: params.AWS_CREDENTIALS) {
                     ecsFargateDeploy(
                         cluster: params.ECS_CLUSTER_NAME,
                         service: params.ECS_SERVICE_NAME,
