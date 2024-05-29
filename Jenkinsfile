@@ -8,11 +8,7 @@ pipeline {
           string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'buggy', description: 'Name of the Docker image')
           string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region')
           string(name: 'AWS_ECR_REPO_URL', defaultValue: '975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy', description: 'AWS ECR repository URL')
-          string(name: 'ECS_CLUSTER_NAME', defaultValue: 'Test_Cluster', description: 'ECS Cluster Name')
-          string(name: 'ECS_SERVICE_NAME', defaultValue: 'test', description: 'ECS Service Name')
-          string(name: 'ECS_TASK_DEFINITION', defaultValue: 'task-dev01', description: 'ECS Task Definition Name')
-          string(name: 'ECS_CONTAINER_NAME', defaultValue: 'test', description: 'ECS Container Name')
-          credentials(name: 'AWS_CREDENTIALS', description: 'AWS credentials for ECR and ECS', defaultValue: '', required: true)
+ 
     }
 
     stages {
@@ -64,20 +60,6 @@ pipeline {
 
                     // Push Docker image to ECR
                     sh "docker push ${params.AWS_ECR_REPO_URL}:latest"
-                }
-            }
-        }
-
-        stage('Deploy to ECS Fargate') {
-            steps {
-                withAWS(region: params.AWS_REGION, credentials: params.AWS_CREDENTIALS) {
-                    ecsFargateDeploy(
-                        cluster: params.ECS_CLUSTER_NAME,
-                        service: params.ECS_SERVICE_NAME,
-                        taskDefinition: params.ECS_TASK_DEFINITION,
-                        containerName: params.ECS_CONTAINER_NAME,
-                        image: "${params.AWS_ECR_REPO_URL}:latest"
-                    )
                 }
             }
         }
