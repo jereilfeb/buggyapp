@@ -66,4 +66,4 @@ pipeline {
             sh 'docker rmi -f buggy:latest'
         }
     }
-}
+
