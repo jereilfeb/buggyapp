@@ -51,7 +51,7 @@ pipeline {
                 script {
                     // Push Docker image to ECR
                     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh "docker push https://975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest"
+                        sh "docker push 975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest"
                     }
                 }
             }
