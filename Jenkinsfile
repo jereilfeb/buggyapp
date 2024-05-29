@@ -7,7 +7,7 @@ pipeline {
         string(name: 'SONAR_ORGANIZATION', defaultValue: 'buggy-app-test', description: 'SonarCloud organization key')
         string(name: 'SONAR_TOKEN', defaultValue: '', description: 'SonarCloud token')
         string(name: 'SNYK_API_KEY', defaultValue: '', description: 'Snyk API key')
-        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'buggy:v1', description: 'Name of the Docker image')
+        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'buggy', description: 'Name of the Docker image')
         string(name: 'AWS_ACCESS_KEY_ID', defaultValue: '', description: 'AWS access key ID')
         string(name: 'AWS_SECRET_ACCESS_KEY', defaultValue: '', description: 'AWS secret access key')
         string(name: 'AWS_ECR_REPO_URL', defaultValue: '975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy', description: 'AWS ECR repository URL')
