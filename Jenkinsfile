@@ -45,8 +45,9 @@ pipeline {
         stage('Tag Docker Image') {
             steps {
                 script {
-                    // Tag Docker image
-                    docker.image(params.DOCKER_IMAGE_NAME).tag("latest")
+                    // Tag Docker image with ECR URL
+                    def ecrRepositoryUrl = "${params.AWS_ECR_REPO_URL}"
+                    docker.image(params.DOCKER_IMAGE_NAME).tag(ecrRepositoryUrl)
                 }
             }
         }
@@ -58,10 +59,10 @@ pipeline {
                     sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ECR_REPO_URL}"
 
                     // Push Docker image to ECR
-                    sh "docker push ${params.AWS_ECR_REPO_URL}:latest"
+                    sh "docker push ${params.AWS_ECR_REPO_URL}"
                     
                     // Clean up Docker image
-                    sh "docker rmi -f ${params.DOCKER_IMAGE_NAME}:latest"
+                    sh "docker rmi -f ${params.DOCKER_IMAGE_NAME}"
                 }
             }
         }
