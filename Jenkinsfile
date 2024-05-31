@@ -2,13 +2,12 @@ pipeline {
     agent any
 
     parameters {
-          string(name: 'GIT_REPO_URL', defaultValue: 'https://github.com/jereilfeb/buggyapp.git', description: 'URL of the Git repository')
-          string(name: 'SONAR_PROJECT_KEY', defaultValue: 'buggy-app-test', description: 'SonarCloud project key')
-          string(name: 'SONAR_ORGANIZATION', defaultValue: 'buggy-app-test', description: 'SonarCloud organization key')
-          string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'buggy', description: 'Name of the Docker image')
-          string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region')
-          string(name: 'AWS_ECR_REPO_URL', defaultValue: '975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy', description: 'AWS ECR repository URL')
- 
+        string(name: 'GIT_REPO_URL', defaultValue: 'https://github.com/jereilfeb/buggyapp.git', description: 'URL of the Git repository')
+        string(name: 'SONAR_PROJECT_KEY', defaultValue: 'buggy-app-test', description: 'SonarCloud project key')
+        string(name: 'SONAR_ORGANIZATION', defaultValue: 'buggy-app-test', description: 'SonarCloud organization key')
+        string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'buggy', description: 'Name of the Docker image')
+        string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region')
+        string(name: 'AWS_ECR_REPO_URL', defaultValue: '975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy', description: 'AWS ECR repository URL')
     }
 
     stages {
@@ -47,7 +46,7 @@ pipeline {
             steps {
                 script {
                     // Tag Docker image
-                    sh "docker tag ${params.DOCKER_IMAGE_NAME} ${params.AWS_ECR_REPO_URL}:latest"
+                    docker.image(params.DOCKER_IMAGE_NAME).tag("latest")
                 }
             }
         }
@@ -56,23 +55,24 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     // Login to AWS ECR securely
-                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 975050199901.dkr.ecr.us-east-1.amazonaws.com"
+                    sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ECR_REPO_URL}"
 
                     // Push Docker image to ECR
-                    sh "docker push 975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest"
+                    sh "docker push ${params.AWS_ECR_REPO_URL}:latest"
+                }
+            }
+        }
+
+        stage('Kubernetes Deployment of Buggy Web Application') {
+            steps {
+                withKubeConfig([credentialsId: 'kubelogin']) {
+                    sh('kubectl delete all --all -n devsecops')
+                    sh('kubectl apply -f deployment.yaml --namespace=devsecops')
                 }
             }
         }
     }
 
-stage('Kubernetes Deployment of Buggy Web Application') {
-	   steps {
-	      withKubeConfig([credentialsId: 'kubelogin']) {
-		  sh('kubectl delete all --all -n devsecops')
-		  sh ('kubectl apply -f deployment.yaml --namespace=devsecops')
-		}
-	      }
-   	}
     post {
         always {
             // Clean up Docker image
