@@ -46,8 +46,7 @@ pipeline {
             steps {
                 script {
                     // Tag Docker image with ECR URL
-                    def ecrRepositoryUrl = "${params.AWS_ECR_REPO_URL}"
-                    docker.image(params.DOCKER_IMAGE_NAME).tag(ecrRepositoryUrl)
+                     sh "docker tag buggy 975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest"
                 }
             }
         }
@@ -56,13 +55,10 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     // Login to AWS ECR securely
-                    sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ECR_REPO_URL}"
+                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 975050199901.dkr.ecr.us-east-1.amazonaws.com"
 
                     // Push Docker image to ECR
-                    sh "docker push ${params.AWS_ECR_REPO_URL}"
-                    
-                    // Clean up Docker image
-                    sh "docker rmi -f ${params.DOCKER_IMAGE_NAME}"
+                    sh "docker push 975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy:latest"
                 }
             }
         }
