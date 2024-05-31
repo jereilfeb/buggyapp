@@ -59,6 +59,9 @@ pipeline {
 
                     // Push Docker image to ECR
                     sh "docker push ${params.AWS_ECR_REPO_URL}:latest"
+                    
+                    // Clean up Docker image
+                    sh "docker rmi -f ${params.DOCKER_IMAGE_NAME}:latest"
                 }
             }
         }
@@ -70,13 +73,6 @@ pipeline {
                     sh 'export KUBECONFIG=$KUBECONFIG && kubectl apply -f deployment.yaml --namespace=devsecops'
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            // Clean up Docker image
-            sh "docker rmi -f ${params.DOCKER_IMAGE_NAME}:latest"
         }
     }
 }
