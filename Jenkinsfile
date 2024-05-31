@@ -65,8 +65,7 @@ pipeline {
 
         stage('Kubernetes Deployment of Buggy Web Application') {
             steps {
-                withCredentials([file(credentialsId: 'kubelogin', variable: 'KUBECONFIG')]) {
-                    sh('kubectl delete all --all -n devsecops')
+                withCredentials([file(credentialsId: 'kubelogin', serverUrl: 'https://0BBDD86E4C86F4D0877B76F2CC8C2CE7.gr7.us-east-1.eks.amazonaws.com')]) {
                     sh('kubectl apply -f deployment.yaml --namespace=devsecops')
                 }
             }
