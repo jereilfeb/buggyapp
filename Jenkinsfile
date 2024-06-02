@@ -7,7 +7,7 @@ pipeline {
         string(name: 'SONAR_ORGANIZATION', defaultValue: 'buggy-app-test', description: 'SonarCloud organization key')
         string(name: 'DOCKER_IMAGE_NAME', defaultValue: 'buggy', description: 'Name of the Docker image')
         string(name: 'AWS_REGION', defaultValue: 'us-east-1', description: 'AWS Region')
-        string(name: 'AWS_ECR_REPO_URL', defaultValue: '975050199901.dkr.ecr.us-east-1.amazonaws.com', description: 'AWS ECR repository URL')
+        string(name: 'AWS_ECR_REPO_URL', defaultValue: '975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy', description: 'AWS ECR repository URL')
     }
 
     stages {
@@ -46,10 +46,19 @@ pipeline {
             steps {
                 script {
                     // Tag Docker image with ECR URL
-                    def ecrUrl = "${params.AWS_ECR_REPO_URL}/${params.DOCKER_IMAGE_NAME}:latest"
-                    sh "docker tag ${params.DOCKER_IMAGE_NAME} ${ecrUrl}"
+                    def ecrTag = "${params.AWS_ECR_REPO_URL}:latest"
+                    sh "docker tag ${params.DOCKER_IMAGE_NAME} ${ecrTag}"
+                }
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    // Login to AWS ECR securely
                     sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ECR_REPO_URL}"
-                    sh "docker push ${ecrUrl}"
+
+                    sh "docker push ${params.AWS_ECR_REPO_URL}:latest"
                 }
             }
         }
