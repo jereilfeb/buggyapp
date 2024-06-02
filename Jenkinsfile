@@ -33,6 +33,13 @@ pipeline {
             }
         }
 
+        stage('Login to AWS ECR') {
+            steps {
+                // Login to AWS ECR securely
+                sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ECR_REPO_URL}"
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -46,18 +53,15 @@ pipeline {
             steps {
                 script {
                     // Tag Docker image with ECR URL
-                    def ecrTag = "${params.AWS_ECR_REPO_URL}:latest"
-                    sh "docker tag ${params.DOCKER_IMAGE_NAME} ${ecrTag}"
+                    sh "docker tag ${params.DOCKER_IMAGE_NAME}:latest ${params.AWS_ECR_REPO_URL}:latest"
                 }
             }
         }
 
         stage('Push Docker Image to ECR') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    // Login to AWS ECR securely
-                    sh "aws ecr get-login-password --region ${params.AWS_REGION} | docker login --username AWS --password-stdin ${params.AWS_ECR_REPO_URL}"
-
+                script {
+                    // Push Docker image to AWS ECR
                     sh "docker push ${params.AWS_ECR_REPO_URL}:latest"
                 }
             }
