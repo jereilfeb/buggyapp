@@ -15,7 +15,7 @@ spec:
       containers:
       - name: buggy-web-app
         image: 975050199901.dkr.ecr.us-east-1.amazonaws.com/buggy
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
 ---
